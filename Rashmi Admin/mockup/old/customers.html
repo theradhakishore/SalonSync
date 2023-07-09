@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rashmi Salon | Customers</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="dashboard.html">Home</a></li>
+            <li><a href="customers.html">Customers</a></li>
+            <li><a href="employees.html">Employees</a></li>
+            <li><a href="appointments.html">Appointments</a></li>
+            <li><a href="productservices.html">Offerings</a></li>
+            <li><a href="billing.html">Billing</a></li>
+            <li><a href="credit.html">Credits</a></li>
+            <li><a href="debit.html">Debits</a></li>
+        </ul>
+    </nav>
+    <main>
+        <h2>Add Customer:</h2>
+        <form name="addNewCustomerForm" action="appointments.html" method="post" onsubmit="return addNewCustomer()">
+            <label for="customerFirstName">Customer First Name:</label><br>
+            <input type="text" name="customerFirstName" id="customerFirstName" required><br>
+            <label for="customerLastName">Customer Last Name:</label><br>
+            <input type="text" name="customerLastName" id="customerLastName"><br>
+            <label for="customerDOB">Customer Email:</label><br>
+            <input type="email" name="customerEmail" id="customerEmail"><br>
+            <label for="customerDOB">Customer DOB:</label><br>
+            <input type="date" name="customerDOB" id="customerDOB" required><br>
+            <label for="customerContactNumber">Customer Contact Number:</label><br>
+            <input type="tel" pattern="[0-9]{10}" name="customerContactNumber" id="customerContactNumber" required><br>
+            <label for="customerGender">Customer Gender:</label><br>
+            <input type="radio" name="customerGender" id="customerMale" value="Male" required>
+            <label for="customerMale">Male</label><br>
+            <input type="radio" name="customerGender" id="customerFemale" value="Female">
+            <label for="customerFemale">Female</label><br>
+            <input type="radio" name="customerGender" id="customerOther" value="Other">
+            <label for="customerOther">Other</label><br>
+            <input type="submit" value="Add New Customer"><br>
+            <div class="info"></div><br>
+        </form>
+        
+        <h2>All Customers:</h2>
+        <div id="customersList"></div>
+    </main>
+    <script>
+        function addNewCustomer() {
+            const existingCustomers = getAllCustomers()
+
+            const customerID = existingCustomers.length+1
+            const customerFirstName = document.getElementById('customerFirstName').value
+            const customerLastName = document.getElementById('customerLastName').value
+            const customerEmail = document.getElementById('customerEmail').value
+            const customerDOB = document.getElementById('customerDOB').value
+            const customerContactNumber = document.getElementById('customerContactNumber').value
+            const customerGender = document.querySelector('input[name="customerGender"]:checked').value
+
+            const newCustomer = { customerID, customerFirstName, customerLastName, customerEmail, customerDOB, customerContactNumber, customerGender }
+            existingCustomers.push(newCustomer)
+
+            localStorage.setItem('customers', JSON.stringify(existingCustomers))
+            // evt.preventDefault()
+            console.log('added customer')
+            return false
+        }
+
+        function getAllCustomers() {
+            return JSON.parse(localStorage.getItem('customers') || '[]')
+        }
+
+        const ROW_ELEMENT = document.createElement('tr')
+        const CELL_ELEMENT = document.createElement('td')
+        const INPUT_ELEMENT = document.createElement('input')
+        function listAllCustomers(table) {
+            const customersList = getAllCustomers()
+            for(customer of customersList) {
+                const new_row = ROW_ELEMENT.cloneNode(true)
+                const id_field = CELL_ELEMENT.cloneNode(true)
+                const first_name_field = CELL_ELEMENT.cloneNode(true)
+                const last_name_field = CELL_ELEMENT.cloneNode(true)
+                const email_field = CELL_ELEMENT.cloneNode(true)
+                const dob_field = CELL_ELEMENT.cloneNode(true)
+                const contact_number_field = CELL_ELEMENT.cloneNode(true)
+                const gender_field = CELL_ELEMENT.cloneNode(true)
+
+                id_field.textContent = customer.customerID
+                first_name_field.textContent = customer.customerFirstName
+                last_name_field.textContent = customer.customerLastName
+                email_field.textContent = customer.customerEmail
+                dob_field.textContent = customer.customerDOB
+                contact_number_field.textContent = customer.customerContactNumber
+                gender_field.textContent = customer.customerGender
+                
+                new_row.appendChild(id_field)
+                new_row.appendChild(first_name_field)
+                new_row.appendChild(last_name_field)
+                new_row.appendChild(email_field)
+                new_row.appendChild(dob_field)
+                new_row.appendChild(contact_number_field)
+                new_row.appendChild(gender_field)
+                table.appendChild(new_row)
+            }
+        }
+        listAllCustomers(document.getElementById('customersList'))
+    </script>
+</body>
+</html>

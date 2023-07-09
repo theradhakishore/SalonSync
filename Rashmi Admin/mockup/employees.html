@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rashmi Salon | Employees</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="dashboard.html">Home</a></li>
+            <li><a href="customers.html">Customers</a></li>
+            <li><a href="employees.html">Employees</a></li>
+            <li><a href="appointments.html">Appointments</a></li>
+            <li><a href="productservices.html">Offerings</a></li>
+            <li><a href="billing.html">Billing</a></li>
+            <li><a href="credit.html">Credits</a></li>
+            <li><a href="debit.html">Debits</a></li>
+        </ul>
+    </nav>
+    <main>
+        <h2>Add Employee:</h2>
+        <form name="addNewEmployeeForm" action="appointments.html" method="post" onsubmit="return addNewEmployee()">
+            <label for="employeeFirstName">Employee First Name:</label><br>
+            <input type="text" name="employeeFirstName" id="employeeFirstName" required><br>
+            <label for="employeeLastName">Employee Last Name:</label><br>
+            <input type="text" name="employeeLastName" id="employeeLastName"><br>
+            <label for="employeeDOB">Employee Email:</label><br>
+            <input type="email" name="employeeEmail" id="employeeEmail"><br>
+            <label for="employeeDOB">Employee DOB:</label><br>
+            <input type="date" name="employeeDOB" id="employeeDOB" required><br>
+            <label for="employeeContactNumber">Employee Contact Number:</label><br>
+            <input type="tel" pattern="[0-9]{10}" name="employeeContactNumber" id="employeeContactNumber" required><br>
+            <label for="employeeGender">Employee Gender:</label><br>
+            <input type="radio" name="employeeGender" id="employeeMale" value="Male" required>
+            <label for="employeeMale">Male</label><br>
+            <input type="radio" name="employeeGender" id="employeeFemale" value="Female">
+            <label for="employeeFemale">Female</label><br>
+            <input type="radio" name="employeeGender" id="employeeOther" value="Other">
+            <label for="employeeOther">Other</label><br>
+            <input type="submit" value="Add New Employee"><br>
+            <div class="info"></div><br>
+        </form>
+        
+        <h2>All Employees:</h2>
+        <div id="employeesList"></div>
+    </main>
+    <script>
+
+        function addNewEmployee() {
+            const existingEmployees = getAllEmployees()
+
+            const employeeID = existingEmployees.length+1
+            const employeeFirstName = document.getElementById('employeeFirstName').value
+            const employeeLastName = document.getElementById('employeeLastName').value
+            const employeeEmail = document.getElementById('employeeEmail').value
+            const employeeDOB = document.getElementById('employeeDOB').value
+            const employeeContactNumber = document.getElementById('employeeContactNumber').value
+            const employeeGender = document.querySelector('input[name="employeeGender"]:checked').value
+
+            const newEmployee = { employeeID, employeeFirstName, employeeLastName, employeeEmail, employeeDOB, employeeContactNumber, employeeGender }
+            existingEmployees.push(newEmployee)
+
+            localStorage.setItem('employees', JSON.stringify(existingEmployees))
+            // evt.preventDefault()
+            console.log('added employee')
+            return false
+        }
+
+        function getAllEmployees() {
+            return JSON.parse(localStorage.getItem('employees') || '[]')
+        }
+
+        const ROW_ELEMENT = document.createElement('tr')
+        const CELL_ELEMENT = document.createElement('td')
+        const INPUT_ELEMENT = document.createElement('input')
+        function listAllEmployees(table) {
+            const employeesList = getAllEmployees()
+            for(employee of employeesList) {
+                const new_row = ROW_ELEMENT.cloneNode(true)
+                const id_field = CELL_ELEMENT.cloneNode(true)
+                const first_name_field = CELL_ELEMENT.cloneNode(true)
+                const last_name_field = CELL_ELEMENT.cloneNode(true)
+                const email_field = CELL_ELEMENT.cloneNode(true)
+                const dob_field = CELL_ELEMENT.cloneNode(true)
+                const contact_number_field = CELL_ELEMENT.cloneNode(true)
+                const gender_field = CELL_ELEMENT.cloneNode(true)
+
+                id_field.textContent = employee.employeeID
+                first_name_field.textContent = employee.employeeFirstName
+                last_name_field.textContent = employee.employeeLastName
+                email_field.textContent = employee.employeeEmail
+                dob_field.textContent = employee.employeeDOB
+                contact_number_field.textContent = employee.employeeContactNumber
+                gender_field.textContent = employee.employeeGender
+                
+                new_row.appendChild(id_field)
+                new_row.appendChild(first_name_field)
+                new_row.appendChild(last_name_field)
+                new_row.appendChild(email_field)
+                new_row.appendChild(dob_field)
+                new_row.appendChild(contact_number_field)
+                new_row.appendChild(gender_field)
+                table.appendChild(new_row)
+            }
+        }
+        listAllEmployees(document.getElementById('employeesList'))
+    </script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rashmi Salon | Credits</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="dashboard.html">Home</a></li>
+            <li><a href="customers.html">Customers</a></li>
+            <li><a href="employees.html">Employees</a></li>
+            <li><a href="appointments.html">Appointments</a></li>
+            <li><a href="productservices.html">Offerings</a></li>
+            <li><a href="billing.html">Billing</a></li>
+            <li><a href="credit.html">Credits</a></li>
+            <li><a href="debit.html">Debits</a></li>
+        </ul>
+    </nav>
+    <main>
+
+        <h2>Pay Bill:</h2>
+        
+        <form name="generateBillForm" action="billing.html" method="post" onsubmit="return generateBill()">
+            <label for="generateBillAppointmentID">Appointment ID:</label><br>
+            <input type="number" name="generateBillAppointmentID" id="generateBillAppointmentID" min="1" required><br>
+            <input type="submit" value="Generate Bill"><br>
+            <div class="info"></div><br>
+        </form>
+        <form name="payBillForm" action="billing.html" method="post" onsubmit="return payBill()">
+            <label for="payBillAppointmentID">Appointment ID:</label><br>
+            <input type="number" name="payBillAppointmentID" id="payBillAppointmentID" required disabled><br>
+            <label for="paymentAmount">Payment Amount:</label><br>
+            <input type="number" name="paymentAmount" id="paymentAmount" required disabled><br>
+            <label for="paymentMethod">Payment Method:</label><br>
+            <input type="radio" name="paymentMethod" id="cashPayment" value="cash" required>
+            <label for="cashPayment">Cash</label><br>
+            <input type="radio" name="paymentMethod" id="upiPayment" value="upi">
+            <label for="upiPayment">UPI</label><br>
+            <input type="radio" name="paymentMethod" id="cardPayment" value="card">
+            <label for="cardPayment">Card</label><br>
+            <input type="submit" value="Pay Bill"><br>
+            <div class="info"></div><br>
+        </form>
+
+        <h2>Add Product Sold:</h2>
+        <form name="addNewProductSoldForm" action="billing.html" method="post" onsubmit="return addNewProductSold()">
+            <label for="productSoldAppointmentID">Appointment ID:</label><br>
+            <input type="number" name="productSoldAppointmentID" id="productSoldAppointmentID" min="1" required><br>
+            <label for="productSoldID">Product Sold ID:</label><br>
+            <input type="number" name="productSoldID" id="productSoldID" min="1" required><br>
+            <label for="productSoldCount">Product Sold Count:</label><br>
+            <input type="number" name="productSoldCount" id="productSoldCount" required value="1"><br>
+            <input type="submit" value="Add New Product Sold"><br>
+            <div class="info"></div><br>
+        </form>
+        
+        <h2>All Product Sales:</h2>
+        <div id="productsSoldList"></div>
+
+        <h2>Add Service Sales:</h2>
+        <form name="SForm" action="billing.html" method="post" onsubmit="return addNewServiceSold()">
+            <label for="serviceSoldAppointmentID">Appointment ID:</label><br>
+            <input type="number" name="serviceSoldAppointmentID" id="serviceSoldAppointmentID" min="1" required><br>
+            <label for="serviceSoldID">Service Sold ID:</label><br>
+            <input type="number" name="serviceSoldID" id="serviceSoldID" min="1" required><br>
+            <input type="submit" value="Add New Service Sold"><br>
+            <div class="info"></div><br>
+        </form>
+        
+        <h2>All Service Sales:</h2>
+        <div id="servicesSoldList"></div>
+    </main>
+    <script>
+        function generateBill() {
+            const existingAppointments = getAllAppointments()
+            console.log(existingAppointments)
+            const appointmentsToday = existingAppointments[new Date().toISOString().slice(0, 10)]
+            const generateBillAppointmentID = document.getElementById('generateBillAppointmentID').value
+            const selectedAppointment = appointmentsToday[generateBillAppointmentID]
+            if(!selectedAppointment) return false
+            const payBillAppointmentID = document.getElementById('payBillAppointmentID')
+            const paymentAmount = document.getElementById('paymentAmount')
+            
+            const allProductsSold = getAllProductsSold()
+            const allServicesSold = getAllServicesSold()
+            const allProducts = getAllProducts()
+            const allServices = getAllServices()
+            console.log(allProductsSold)
+            console.log(allServicesSold)
+            console.log(allProducts)
+            console.log(allServices)
+            const appointmentProductsSold = allProductsSold[new Date().toISOString().slice(0, 10)].filter(product => product.productSoldAppointmentID == generateBillAppointmentID)
+            const appointmentServicesSold = allServicesSold[new Date().toISOString().slice(0, 10)].filter(service => service.serviceSoldAppointmentID == generateBillAppointmentID)
+            console.log(appointmentProductsSold)
+            console.log(appointmentServicesSold)
+            const productsSoldAmount = appointmentProductsSold.map(
+                product => allProducts[product.productSoldID-1].productPrice * (1 + allProducts[product.productSoldID-1].productTaxSlab/100) * product.productSoldCount
+            ).reduce((a, b) => a+b, 0)
+            const servicesSoldAmount = appointmentServicesSold.map(service => allServices[service.serviceSoldID-1].servicePrice * 1).reduce((a, b) => a+b, 0)
+            console.log(productsSoldAmount)
+            console.log(servicesSoldAmount)
+            const totalBillingAmount = productsSoldAmount + servicesSoldAmount
+            payBillAppointmentID.value = generateBillAppointmentID
+            paymentAmount.value = totalBillingAmount
+            console.log(totalBillingAmount)
+            // const allCreditInflow = 
+            // if(!appointmentsToday.find(appointment => appointment.id === ))
+            return false
+        }
+
+        function payBill() {
+            const allCreditInflow = getAllCreditInflow()
+            const creditID = Object.keys(allCreditInflow).length+1
+            const payBillAppointmentID = document.getElementById('payBillAppointmentID').value
+            const paymentAmount = document.getElementById('paymentAmount').value
+            const paymentMode = document.querySelector('input[name="paymentMethod"]:checked').value
+            const appointmentDate = new Date().toISOString().slice(0, 10)
+
+            const newCreditInflow = { creditID, appointmentDate, payBillAppointmentID, paymentAmount, paymentMode }
+            if(allCreditInflow[appointmentDate])
+            allCreditInflow[appointmentDate].push(newCreditInflow)
+            else
+            allCreditInflow[appointmentDate] = [newCreditInflow]
+
+            localStorage.setItem('credit', JSON.stringify(allCreditInflow))
+            // evt.preventDefault()
+            console.log('added credit inflow')
+            return false
+        }
+
+        function getAllCreditInflow() {
+            return JSON.parse(localStorage.getItem('credit') || '{}')
+        }
+        
+        function getAllAppointments() {
+            return JSON.parse(localStorage.getItem('appointments') || '{}')
+        }
+        
+        function getAllProducts() {
+            return JSON.parse(localStorage.getItem('products') || '[]')
+        }
+
+        function getAllServices() {
+            return JSON.parse(localStorage.getItem('services') || '[]')
+        }
+
+        function addNewProductSold() {
+            const allProductsSold = getAllProductsSold()
+
+            const saleID = Object.keys(allProductsSold).length+1
+            const productSoldID = document.getElementById('productSoldID').value
+            const productSoldCount = document.getElementById('productSoldCount').value
+            const productSoldAppointmentID = document.getElementById('productSoldAppointmentID').value
+
+            const newProductSale = { saleID, productSoldID, productSoldCount, productSoldAppointmentID }
+            const productSaleDate = new Date().toISOString().slice(0, 10)
+
+            if(allProductsSold[productSaleDate])
+            allProductsSold[productSaleDate].push(newProductSale)
+            else
+            allProductsSold[productSaleDate] = [newProductSale]
+
+            localStorage.setItem('productsSold', JSON.stringify(allProductsSold))
+            // evt.preventDefault()
+            console.log('added product sale')
+            return false
+        }
+
+        function getAllProductsSold() {
+            return JSON.parse(localStorage.getItem('productsSold') || '{}')
+        }
+        
+        const ROW_ELEMENT = document.createElement('tr')
+        const CELL_ELEMENT = document.createElement('td')
+        const INPUT_ELEMENT = document.createElement('input')
+        function listAllProductsSold(table) {
+            const productsSoldList = getAllProductsSold()
+            for(productsSoldToday of Object.values(productsSoldList)) {
+                for(const product of productsSoldToday) {
+                    const new_row = ROW_ELEMENT.cloneNode(true)
+                    const id_field = CELL_ELEMENT.cloneNode(true)
+                    const product_id_field = CELL_ELEMENT.cloneNode(true)
+                    const count_field = CELL_ELEMENT.cloneNode(true)
+                    const appointment_id_field = CELL_ELEMENT.cloneNode(true)
+
+                    id_field.textContent = product.saleID
+                    product_id_field.textContent = product.productSoldID
+                    count_field.textContent = product.productSoldCount
+                    appointment_id_field.textContent = product.productSoldAppointmentID
+                    
+                    new_row.appendChild(id_field)
+                    new_row.appendChild(appointment_id_field)
+                    new_row.appendChild(product_id_field)
+                    new_row.appendChild(count_field)
+                    table.appendChild(new_row)
+                }
+            }
+        }
+        listAllProductsSold(document.getElementById('productsSoldList'))
+
+        function addNewServiceSold() {
+            const allServicesSold = getAllServicesSold()
+
+            const saleID = Object.keys(allServicesSold).length+1
+            const serviceSoldID = document.getElementById('serviceSoldID').value
+            const serviceSoldAppointmentID = document.getElementById('serviceSoldAppointmentID').value
+
+            const newServiceSale = { saleID, serviceSoldID, serviceSoldAppointmentID }
+            const serviceSaleDate = new Date().toISOString().slice(0, 10)
+
+            if(allServicesSold[serviceSaleDate])
+            allServicesSold[serviceSaleDate].push(newServiceSale)
+            else
+            allServicesSold[serviceSaleDate] = [newServiceSale]
+
+            localStorage.setItem('servicesSold', JSON.stringify(allServicesSold))
+            // evt.preventDefault()
+            console.log('added service sale')
+            return false
+        }
+
+        function getAllServicesSold() {
+            return JSON.parse(localStorage.getItem('servicesSold') || '{}')
+        }
+        
+        function listAllServicesSold(table) {
+            const servicesSoldList = getAllServicesSold()
+            for(servicesSoldToday of Object.values(servicesSoldList)) {
+                for(const service of servicesSoldToday) {
+                    const new_row = ROW_ELEMENT.cloneNode(true)
+                    const id_field = CELL_ELEMENT.cloneNode(true)
+                    const service_id_field = CELL_ELEMENT.cloneNode(true)
+                    const appointment_id_field = CELL_ELEMENT.cloneNode(true)
+
+                    id_field.textContent = service.serviceSaleID
+                    service_id_field.textContent = service.serviceSoldID
+                    appointment_id_field.textContent = service.serviceSoldAppointmentID
+                    
+                    new_row.appendChild(id_field)
+                    new_row.appendChild(appointment_id_field)
+                    new_row.appendChild(service_id_field)
+                    table.appendChild(new_row)
+                }
+            }
+        }
+        listAllServicesSold(document.getElementById('servicesSoldList'))
+    </script>
+</body>
+</html>

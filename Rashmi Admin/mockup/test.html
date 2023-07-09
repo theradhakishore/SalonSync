@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script type="module">
+        import { app } from './helper/firebase.js'
+        import { addNewCustomer, getAllCustomers, getCustomerById, getAdvancePaidByCustomerId, getRepaymentLeftByCustomerId, getCustomersByNetAdvancePaid, getCustomersByNetRepaymentLeft, getAdvancePaid, getRepaymentLeft, getNetAdvancePaidByCustomerId, getNetRepaymentLeftByCustomerId, addAdvancePaidForCustomer, addRepaymentLeftForCustomer, useAdvancePaidForCustomer, fulfillRepaymentLeftForCustomer } from './helper/customers.js'
+        import { addNewEmployee, getAllEmployees, getEmployeeById } from './helper/employees.js'
+        import { addNewProduct, getAllProducts, getProductById } from './helper/products.js'
+        import { addNewService, getAllServices, getServiceById } from './helper/services.js'
+        import { addNewAppointment, getAllAppointments, getAppointmentById, getAppointmentsByStatus, getAppointmentsByPaymentMode, setVisitingStatusForAppointmentId, setBillingStatusForAppointmentId, addServiceSoldForAppointmentId, addProductSoldForAppointmentId } from './helper/appointments.js'
+        import {
+            getFirestore,
+            doc,
+            getDoc,
+            getDocs,
+            updateDoc,
+            onSnapshot,
+            collection,
+            query,
+            where,
+            Timestamp,
+            increment
+        } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+
+        window.Timestamp = Timestamp
+        window.addNewCustomer = addNewCustomer
+        window.getAllCustomers = getAllCustomers
+        window.getCustomerById = getCustomerById
+        window.getAdvancePaid = getAdvancePaid
+        window.getRepaymentLeft = getRepaymentLeft
+        window.getAdvancePaidByCustomerId = getAdvancePaidByCustomerId
+        window.getRepaymentLeftByCustomerId = getRepaymentLeftByCustomerId
+        window.getCustomersByNetAdvancePaid = getCustomersByNetAdvancePaid
+        window.getCustomersByNetRepaymentLeft = getCustomersByNetRepaymentLeft
+        window.getNetAdvancePaidByCustomerId = getNetAdvancePaidByCustomerId
+        window.getNetRepaymentLeftByCustomerId = getNetRepaymentLeftByCustomerId
+        window.addAdvancePaidForCustomer = addAdvancePaidForCustomer
+        window.addRepaymentLeftForCustomer = addRepaymentLeftForCustomer
+        window.useAdvancePaidForCustomer = useAdvancePaidForCustomer
+        window.fulfillRepaymentLeftForCustomer = fulfillRepaymentLeftForCustomer
+        window.addNewEmployee = addNewEmployee
+        window.getAllEmployees = getAllEmployees
+        window.getEmployeeById = getEmployeeById
+        window.addNewProduct = addNewProduct
+        window.getAllProducts = getAllProducts
+        window.getProductById = getProductById
+        window.addNewService = addNewService
+        window.getAllServices = getAllServices
+        window.getServiceById = getServiceById
+        window.addNewAppointment = addNewAppointment
+        window.getAllAppointments = getAllAppointments
+        window.getAppointmentById = getAppointmentById
+        window.getAppointmentsByStatus = getAppointmentsByStatus
+        window.getAppointmentsByPaymentMode = getAppointmentsByPaymentMode
+        window.setVisitingStatusForAppointmentId = setVisitingStatusForAppointmentId
+        window.setBillingStatusForAppointmentId = setBillingStatusForAppointmentId
+        window.addServiceSoldForAppointmentId = addServiceSoldForAppointmentId
+        window.addProductSoldForAppointmentId = addProductSoldForAppointmentId
+
+        console.log(app)
+
+        const db = getFirestore()
+
+        const employees = collection(db, 'employeeData')
+
+        console.log(employees)
+
+        console.log(await getDocs(query(employees)))
+
+        // const emp = db.collection('employeeData')
+    </script>
+</body>
+</html>

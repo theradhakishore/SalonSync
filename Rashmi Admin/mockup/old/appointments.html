@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rashmi Salon | Dashboard</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="dashboard.html">Home</a></li>
+            <li><a href="customers.html">Customers</a></li>
+            <li><a href="employees.html">Employees</a></li>
+            <li><a href="appointments.html">Appointments</a></li>
+            <li><a href="productservices.html">Offerings</a></li>
+            <li><a href="billing.html">Billing</a></li>
+            <li><a href="credit.html">Credits</a></li>
+            <li><a href="debit.html">Debits</a></li>
+        </ul>
+    </nav>
+    <main>
+        <h2>Add Appointment:</h2>
+        <form action="appointments.html" method="post" onsubmit="return addNewAppointment()">
+            <label for="customerID">Customer ID:</label><br>
+            <input type="text" name="customerID" id="customerID"><br>
+            <label for="appointmentDate">Appointment Date:</label><br>
+            <input type="date" name="appointmentDate" id="appointmentDate"><br>
+            <label for="appointmentTime">Appointment Time:</label><br>
+            <input type="time" name="appointmentTime" id="appointmentTime"><br>
+            <input type="submit" value="Add New Appointment"><br>
+            <div class="info"></div><br>
+        </form>
+        <!-- <button onclick="showDialog()">Open Dialog</button>
+        <dialog id="my-dialog">
+            <form method="dialog">
+                <!- form inputs here ->
+                <button type="submit">Submit</button>
+            </form>
+        </dialog> -->
+        <h2>All Appointments:</h2>
+        <div id="appointmentsList"></div>
+        <h2>Visiting Appointments:</h2>
+        <div id="visitingList"></div>
+        <h2>Billing Appointments:</h2>
+        <div id="billingList"></div>
+    </main>
+    <script>
+        function addNewAppointment() {
+            const existingAppointments = getAllAppointments()
+
+            const appointmentID = Object.keys(existingAppointments).length+1
+            const customerID = document.getElementById('customerID').value
+            const appointmentDate = document.getElementById('appointmentDate').value
+            const appointmentTime = document.getElementById('appointmentTime').value
+            const isVisiting = false
+            const isBilling = false
+
+            const newAppointment = { appointmentID, customerID, appointmentDate, appointmentTime, isVisiting, isBilling }
+            if(existingAppointments[appointmentDate])
+            existingAppointments[appointmentDate][appointmentID] = newAppointment
+            else
+            existingAppointments[appointmentDate] = { [appointmentID]: newAppointment }
+
+            localStorage.setItem('appointments', JSON.stringify(existingAppointments))
+            // evt.preventDefault()
+            console.log('added appointment')
+            return false
+        }
+        
+        const ROW_ELEMENT = document.createElement('tr')
+        const CELL_ELEMENT = document.createElement('td')
+        const INPUT_ELEMENT = document.createElement('input')
+        function listAllAppointments(table) {
+            const appointmentsList = getAllAppointments()
+            for(const appointmentsToday of Object.values(appointmentsList)) {
+                console.log(appointmentsToday)
+                for(const appointment of Object.values(appointmentsToday)) {
+                    addAppointmentTo(table, appointment)
+                }
+            }
+        }
+
+        function listVisitingAppointments(table) {
+            const appointmentsList = getAllAppointments()
+            for(const appointmentsToday of Object.values(appointmentsList)) {
+                console.log(appointmentsToday)
+                for(const appointment of Object.values(appointmentsToday)) {
+                    if(appointment.isVisiting)
+                    addAppointmentTo(table, appointment)
+                }
+            }
+        }
+
+        function listBillingAppointments(table) {
+            const appointmentsList = getAllAppointments()
+            for(const appointmentsToday of Object.values(appointmentsList)) {
+                console.log(appointmentsToday)
+                for(const appointment of Object.values(appointmentsToday)) {
+                    if(appointment.isBilling)
+                    addAppointmentTo(table, appointment)
+                }
+            }
+        }
+        
+        listAllAppointments(document.getElementById('appointmentsList'))
+        listVisitingAppointments(document.getElementById('visitingList'))
+        listBillingAppointments(document.getElementById('billingList'))
+
+        function addAppointmentTo(container, appointment) {
+            console.log(appointment)
+            const new_row = ROW_ELEMENT.cloneNode(true)
+            const id_field = CELL_ELEMENT.cloneNode(true)
+            const customer_id_field = CELL_ELEMENT.cloneNode(true)
+            const date_field = CELL_ELEMENT.cloneNode(true)
+            const time_field = CELL_ELEMENT.cloneNode(true)
+            const visiting_field = CELL_ELEMENT.cloneNode(true)
+            const billing_field = CELL_ELEMENT.cloneNode(true)
+
+            id_field.textContent = appointment.appointmentID
+            customer_id_field.textContent = appointment.customerID
+            date_field.textContent = appointment.appointmentDate
+            time_field.textContent = appointment.appointmentTime
+            const visiting_checkbox = INPUT_ELEMENT.cloneNode(true)
+            visiting_checkbox.type = 'checkbox'
+            visiting_checkbox.checked = appointment.isVisiting ? 'checked' : ''
+            visiting_field.appendChild(visiting_checkbox)
+            const billing_checkbox = INPUT_ELEMENT.cloneNode(true)
+            billing_checkbox.type = 'checkbox'
+            billing_checkbox.checked = appointment.isBilling ? 'checked' : ''
+            billing_field.appendChild(billing_checkbox)
+
+            visiting_checkbox.onclick = _ => updateCustomerArrival(appointment.appointmentID, visiting_checkbox.checked)
+            billing_checkbox.onclick = _ => updateCustomerBilling(appointment.appointmentID, billing_checkbox.checked)
+            
+            new_row.appendChild(id_field)
+            new_row.appendChild(customer_id_field)
+            new_row.appendChild(date_field)
+            new_row.appendChild(time_field)
+            new_row.appendChild(visiting_field)
+            new_row.appendChild(billing_field)
+            container.appendChild(new_row)
+        }
+
+        function getAllAppointments() {
+            return JSON.parse(localStorage.getItem('appointments') || '{}')
+        }
+
+        function updateCustomerArrival(appointmentID, isVisiting) {
+            const appointmentsList = getAllAppointments()
+            for(const appointmentsToday of Object.values(appointmentsList)) {
+                for(const appointment of Object.values(appointmentsToday)) {
+                    if(appointment.appointmentID !== appointmentID) continue
+                    appointment.isVisiting = isVisiting
+                    break
+                }
+            }
+            localStorage.setItem('appointments', JSON.stringify(appointmentsList))
+        }
+
+        function updateCustomerBilling(appointmentID, isBilling) {
+            const appointmentsList = getAllAppointments()
+            for(const appointmentsToday of Object.values(appointmentsList)) {
+                for(const appointment of Object.values(appointmentsToday)) {
+                    if(appointment.appointmentID !== appointmentID) continue
+                    appointment.isBilling = isBilling
+                    break
+                }
+            }
+            localStorage.setItem('appointments', JSON.stringify(appointmentsList))
+        }
+
+        // const dialog = document.getElementById('my-dialog');
+  
+        // function showDialog() {
+        //     dialog.showModal();
+        // }
+        
+        // dialog.addEventListener('close', function() {
+        //     // handle dialog close event here
+        // });
+    </script>
+</body>
+</html>

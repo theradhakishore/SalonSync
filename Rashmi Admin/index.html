@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Rashmi's Admin</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="vendors/feather/feather.css" />
+  <link rel="stylesheet" href="vendors/mdi/css/materialdesignicons.min.css" />
+  <link rel="stylesheet" href="vendors/ti-icons/css/themify-icons.css" />
+  <link rel="stylesheet" href="vendors/typicons/typicons.css" />
+  <link rel="stylesheet" href="vendors/simple-line-icons/css/simple-line-icons.css" />
+  <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css" />
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+  <link rel="stylesheet" href="vendors/datatables.net-bs4/dataTables.bootstrap4.css" />
+  <link rel="stylesheet" href="js/select.dataTables.min.css" />
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="css/vertical-layout-light/style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <!-- endinject -->
+  <link rel="shortcut icon" href="images/favicon.ico" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.9.1/jquery.timepicker.min.css" />
+</head>
+
+<body>
+  <div id="success" class="toast" style="position: absolute; bottom: 0; right: 0; z-index: 1" data-delay="6000">
+    <div class="toast-header" style="background-color: #ffd700">
+      <img src="images/favicon.ico" class="rounded mr-2" alt="..." />
+      <strong class="mr-auto" style="color: #333533">Success</strong>
+      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="toast-body" id="appointmentToast">
+      <!-- Appointment Created Succesfully -->
+    </div>
+  </div>
+
+  <section class="modal fade" id="createAppointmentModal" tabindex="-1" aria-labelledby="createAppointmentModal"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Rashmi Appointment Creation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form class="forms-sample" id="createAppointmentForm">
+            <div class="form-group">
+              <label for="inputContactNumber">Contact No</label>
+              <input type="number" class="form-control" id="inputContactNumber" placeholder="Contact Number" />
+            </div>
+            <div class="form-group">
+              <label for="inputCustomerName">Customer Name</label>
+              <input type="text" class="form-control" id="inputCustomerName" placeholder="Customer Name" />
+            </div>
+            <div class="form-group">
+              <label>Appointment Date</label>
+              <input type="date" class="form-control" id="inputAppointmentDate" />
+            </div>
+            <div class="form-group">
+              <label for="inputAppointmentDate">Appointment Time</label>
+              <select id="inputAppointmentTime" name="inputAppointmentTime" class="form-control">
+                <option value="9:00 AM">9:00 AM</option>
+                <option value="10:00 AM">10:00 AM</option>
+                <option value="11:00 AM">11:00 AM</option>
+                <option value="12:00 PM">12:00 PM</option>
+                <option value="1:00 PM">1:00 PM</option>
+                <option value="2:00 PM">2:00 PM</option>
+                <option value="3:00 PM">3:00 PM</option>
+                <option value="4:00 PM">4:00 PM</option>
+                <option value="5:00 PM">5:00 PM</option>
+                <option value="6:00 PM">6:00 PM</option>
+                <option value="7:00 PM">7:00 PM</option>
+                <option value="8:00 PM">8:00 PM</option>
+              </select>
+              <!-- <input type="text" class="form-control" name="time" id="inputAppointmentTime" /> -->
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+          </button>
+          <button type="button" class="btn btn-primary" id="createAppointmentButton">
+            Create Appointment
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="modal fade" id="billDetailsModal" tabindex="-1" aria-labelledby="billDetailsModal"
+    aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 800px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Service and Bill Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- <h5 class="bg-dark text-white rounded-pill p-2">Service Details</h5>
+          <div id="servicesList"></div> -->
+          <!-- <h5 class="bg-dark text-white rounded-pill p-2">Billing Details</h5> -->
+          <!-- <div class="card" style="margin-bottom: 20px;">
+            <div class="card-body">
+              
+            </div>
+          </div> -->
+          <div class="card">
+            <div class="card-body">
+             <!-- <h6>Billing Details</h6>  -->
+             <div id="servicesList"></div>
+              <div class="table-responsive pt-3">
+                <table class="table table-bordered">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <div id="discountOrAdditionalAmountWrapper">
+                          <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="discountAdditionalChargeToggle"
+                            onclick="toggleDiscountOrAdditionalCharge(document.getElementById('discountOrAdditionalAmountWrapper'))">
+                            <label class="custom-control-label" for="discountAdditionalChargeToggle">Toggle add Discount / Additional Charge</label>
+                          </div>
+                          <section class="d-flex justify-content-between">
+                            <div id="discountSection">
+                              Discount Amount: <input type="number" name="inputDiscount" id="inputDiscount" value="0" 
+                              onblur="setDiscount(this.value, document.getElementById('discountAmountOrPercentToggle').checked)">
+                            </div>
+                            <div class="custom-control custom-switch">
+                              <input type="checkbox" class="custom-control-input" id="discountAmountOrPercentToggle" 
+                              onclick="toggleAmountOrPercent('Discount', document.getElementById('discountSection'), this.nextElementSibling)">
+                              <label class="custom-control-label" for="discountAmountOrPercentToggle">Click to enter Percentage</label>
+                            </div>
+                          </section>
+                          <section class="d-flex invisible justify-content-between">
+                            <div id="additionalChargeSection">
+                              Additional Charge Amount: <input type="number" name="inputAdditionalCharge" id="inputAdditionalCharge" value="0"
+                              onblur="setAdditionalCharge(this.value, document.getElementById('additionalChargeAmountOrPercentToggle').checked)">
+                            </div>
+                            <div class="custom-control custom-switch">
+                              <input type="checkbox" class="custom-control-input" id="additionalChargeAmountOrPercentToggle"
+                              onclick="toggleAmountOrPercent('Additional Charge', document.getElementById('additionalChargeSection'), this.nextElementSibling)">
+                              <label class="custom-control-label" for="additionalChargeAmountOrPercentToggle">Click to enter Percentage</label>
+                            </div>
+                          </section>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table class="table table-bordered">
+                  <tbody>
+                    <tr>
+                      <td>
+                        Service Amount
+                      </td>
+                      <td>
+                       Rs <span id="serviceAmount"></span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        Advance Paid
+                      </td>
+                      <td class="d-flex justify-content-between">
+                        <div class="d-flex align-content-center flex-wrap">
+                          Rs&nbsp;<span id="advancePaid"></span>
+                        </div>
+                        &nbsp;
+                        <button id="redeemAdvanceButton" type="button" class="btn btn-warning btn-rounded p-2" data-bs-toggle="modal" data-bs-target="#redeemAdvanceModal">
+                          Redeem
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        Total Bill Amount
+                      </td>
+                      <td>
+                          Rs <span id="totalBillAmount"></span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        Payment Mode
+                      </td>
+                      <td>
+                        <div>
+                          <div class="d-flex">
+                            <table>
+                              <tr>
+                                <td>
+                                  Cash
+                                </td>
+                                <td>
+                                  <input type="number" id="cashAmount">
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  Card
+                                </td>
+                                <td>
+                                  <input type="number" id="cardAmount">
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  UPI
+                                </td>
+                                <td>
+                                  <input type="number" id="upiAmount">
+                                </td>
+                              </tr>
+                            </table>
+                            <div class="d-flex flex-column justify-content-center align-content-center w-100 flex-wrap gap-2">
+                              Remaining Payment Left:
+                              <div class="text-center">
+                                Rs&nbsp;<span id="remainingPaymentLeft"></span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- <form class="forms-sample" id="billDetailsForm">
+           
+            <div id="discountOrAdditionalAmountWrapper">
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="discountAdditionalChargeToggle"
+                onclick="toggleDiscountOrAdditionalCharge(document.getElementById('discountOrAdditionalAmountWrapper'))">
+                <label class="custom-control-label" for="discountAdditionalChargeToggle">Toggle add Discount / Additional Charge</label>
+              </div>
+              <section class="d-flex justify-content-between">
+                <div id="discountSection">
+                  Discount Amount: <input type="number" name="inputDiscount" id="inputDiscount" value="0" 
+                  onblur="setDiscount(this.value, document.getElementById('discountAmountOrPercentToggle').checked)">
+                </div>
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="discountAmountOrPercentToggle" 
+                  onclick="toggleAmountOrPercent('Discount', document.getElementById('discountSection'), this.nextElementSibling)">
+                  <label class="custom-control-label" for="discountAmountOrPercentToggle">Click to enter Percentage</label>
+                </div>
+              </section>
+              <section class="d-flex invisible justify-content-between">
+                <div id="additionalChargeSection">
+                  Additional Charge Amount: <input type="number" name="inputAdditionalCharge" id="inputAdditionalCharge" value="0"
+                  onblur="setAdditionalCharge(this.value, document.getElementById('additionalChargeAmountOrPercentToggle').checked)">
+                </div>
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="additionalChargeAmountOrPercentToggle"
+                  onclick="toggleAmountOrPercent('Additional Charge', document.getElementById('additionalChargeSection'), this.nextElementSibling)">
+                  <label class="custom-control-label" for="additionalChargeAmountOrPercentToggle">Click to enter Percentage</label>
+                </div>
+              </section>
+            </div>
+            <div>
+              Total Bill: <span id="totalBillAmount"></span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <div><b>Payment Mode:</b></div>
+              <div>
+                <div>
+                  Cash:
+                  <input type="number" id="cashAmount">
+                </div>
+                <div>
+                  Card:
+                  <input type="number" id="cardAmount">
+                </div>
+                <div>
+                  UPI:
+                  <input type="number" id="upiAmount">
+                </div>
+              </div>
+            </div>
+          </form> -->
+          <script>
+            function updatePaymentLeft() {
+              document.getElementById('remainingPaymentLeft').textContent = document.getElementById('totalBillAmount').textContent - document.getElementById('cashAmount').value - document.getElementById('cardAmount').value - document.getElementById('upiAmount').value
+            }
+            function toggleAmountOrPercent(text, element, label) {
+              if(element.checked) {
+                element.checked = false
+                element.firstChild.textContent = text + ' Amount: '
+                label.textContent = 'Click to enter Percentage'
+              } else {
+                element.checked = true
+                element.firstChild.textContent = text + ' Percentage: '
+                label.textContent = 'Click to enter Amount'
+              }
+            }
+            function toggleDiscountOrAdditionalCharge(element) {
+              for(const e of element.getElementsByTagName('section'))
+              e.classList.toggle('invisible')
+            }
+            function setDiscount(value, usePercent) {
+              if(usePercent)
+              document.getElementById('totalBillAmount').textContent = Math.round((document.getElementById('serviceAmount').textContent - document.getElementById('advancePaid').textContent) * (1 - value/100))
+              else
+              document.getElementById('totalBillAmount').textContent = (document.getElementById('serviceAmount').textContent - document.getElementById('advancePaid').textContent) - value
+              updatePaymentLeft()
+            }
+            function setAdditionalCharge(value, usePercent) {
+              if(usePercent)
+              document.getElementById('totalBillAmount').textContent = Math.round((document.getElementById('serviceAmount').textContent - document.getElementById('advancePaid').textContent) * (1 + + value/100))
+              else
+              document.getElementById('totalBillAmount').textContent = (document.getElementById('serviceAmount').textContent - document.getElementById('advancePaid').textContent) + + value
+              updatePaymentLeft()
+            }
+          </script>
+        </div>
+        <div class="modal-footer">
+          <button id="confirmBillDetailsButton" type="button" class="btn btn-dark rounded-pill" data-bs-dismiss="modal">
+            Confirm
+          </button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
+        <div class="me-3">
+          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-bs-toggle="minimize">
+            <span class="icon-menu"></span>
+          </button>
+        </div>
+        <div>
+          <a class="navbar-brand brand-logo" href="index.html">
+            <img src="images/logo.svg" alt="logo" />
+          </a>
+          <a class="navbar-brand brand-logo-mini" href="index.html">
+            <img src="images/logo-mini.svg" alt="logo" />
+          </a>
+        </div>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-top">
+        <ul class="navbar-nav">
+          <li class="nav-item font-weight-semibold d-none d-lg-block ms-0">
+            <h1 class="welcome-text" id="RashmiGreetings">
+              <script>
+                const hours = new Date().getHours()
+                document.write(hours < 12 ? 'Good Morning, ' : hours < 17 ? 'Good Afternoon, ' : 'Good Evening, ')
+              </script>
+              <span class="text-black fw-bold">Puneet Mishra</span>
+            </h1>
+            <!-- <h3 class="welcome-sub-text">Your performance summary this week </h3> -->
+          </li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item d-none d-lg-block">
+            <!-- <div id="datepicker-popup" class="input-group date datepicker navbar-date-picker">
+              <span class="input-group-addon input-group-prepend border-right">
+                <span class="icon-calendar input-group-text calendar-icon"></span>
+              </span>
+              <input type="date" class="form-control" id="datePicker">
+            </div> -->
+            <input type="date" class="form-control" id="filterDate" name="date" />
+          </li>
+
+          <li class="nav-item dropdown d-none d-lg-block user-dropdown">
+            <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+              <img class="img-xs rounded-circle" src="images/faces/face8.jpg" alt="Profile image" />
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
+              <div class="dropdown-header text-center">
+                <img class="img-md rounded-circle" src="images/faces/face8.jpg" alt="Profile image" />
+                <p class="mb-1 mt-3 font-weight-semibold">Puneet Mishra</p>
+                <p class="fw-light text-muted mb-0">
+                  salonrashmi1990@gmail.com
+                </p>
+              </div>
+              <!-- <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> My Profile <span class="badge badge-pill badge-danger">1</span></a>
+              <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i> Messages</a>
+              <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-calendar-check-outline text-primary me-2"></i> Activity</a>
+              <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-help-circle-outline text-primary me-2"></i> FAQ</a> -->
+              <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>Sign Out</a>
+            </div>
+          </li>
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+          data-bs-toggle="offcanvas">
+          <span class="mdi mdi-menu"></span>
+        </button>
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial -->
+      <!-- partial:partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">
+              <i class="mdi mdi-grid-large menu-icon"></i>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#dailyanalysis" aria-expanded="false"
+              aria-controls="ui-basic">
+              <i class="menu-icon mdi mdi-floor-plan"></i>
+              <span class="menu-title">Daily Analysis</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="dailyanalysis">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                  <a class="nav-link" href="dailyDebit.html">Debit</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="dailyCredit.html">Credit</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false"
+              aria-controls="ui-basic">
+              <i class="menu-icon mdi mdi-chart-line"></i>
+              <span class="menu-title">Monthly Analysis</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-basic">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                  <a class="nav-link" href="monthlyDebit.html">Debit</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="monthlyCredit.html">Credit</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </nav>
+      <!-- partial -->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="home-tab">
+                <div class="d-sm-flex align-items-center justify-content-between border-bottom">
+                  <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                      <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="#newAppointments"
+                        role="tab" aria-controls="appointments" aria-selected="true">New Appointments</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="home-tab" data-bs-toggle="tab" href="#ongoingAppointments" role="tab"
+                        aria-controls="appointments" aria-selected="true">Ongoing Appointments</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#billingAppointments" role="tab"
+                        aria-selected="false">Billing</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#billedAppointments" role="tab"
+                        aria-selected="false">Billed</a>
+                    </li>
+                    <!-- <li class="nav-item">
+                      <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#demographics" role="tab" aria-selected="false">Demographics</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link border-0" id="more-tab" data-bs-toggle="tab" href="#more" role="tab" aria-selected="false">More</a>
+                    </li> -->
+                  </ul>
+                  <!-- <div>
+                    <div class="btn-wrapper">
+                      <a href="#" class="btn btn-otline-dark align-items-center"><i class="icon-share"></i> Share</a>
+                      <a href="#" class="btn btn-otline-dark"><i class="icon-printer"></i> Print</a>
+                      <a href="#" class="btn btn-primary text-white me-0"><i class="icon-download"></i> Export</a>
+                    </div>
+                  </div> -->
+                </div>
+                <div class="tab-content tab-content-basic">
+                  <div class="tab-pane fade show active" id="newAppointments" role="tabpanel"
+                    aria-labelledby="newAppointments">
+                    <div class="row">
+                      <div class="col-sm-12 grid-margin stretch-card">
+                        <div class="card">
+                          <div class="card-body">
+                            <div class="d-sm-flex justify-content-between align-items-start">
+                              <div>
+                                <h4 class="card-title" style="font-weight: 800; color: #ffd700">
+                                  Appointments
+                                </h4>
+                              </div>
+                              <div id="addAppointmentModal">
+                                <button class="btn btn-primary btn-lg text-white mb-0 me-0" type="button"
+                                  data-bs-toggle="modal" data-bs-target="#createAppointmentModal">
+                                  <i class="mdi mdi-account-plus"></i>
+                                  Create Appointment
+                                </button>
+                              </div>
+                            </div>
+
+                            <div class="table-responsive" style="
+                                  height: 400px;
+                                  overflow-y: scroll;
+                                  margin-top: 10px;
+                                ">
+                              <table class="table" style="color: #333533">
+                                <thead>
+                                  <tr>
+                                    <th>Appointment ID</th>
+                                    <th>Customer Details</th>
+                                    <th>Appointment Date</th>
+                                    <th>Visiting Status</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="newAppointmentList"></tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="ongoingAppointments" role="tabpanel"
+                    aria-labelledby="ongoingAppointments">
+                    <div class="row">
+                      <div class="col-sm-12 grid-margin stretch-card">
+                        <div class="card">
+                          <div class="card-body">
+                            <div class="d-sm-flex justify-content-between align-items-start">
+                              <div>
+                                <h4 class="card-title" style="font-weight: 800; color: #ffd700">
+                                  Appointments
+                                </h4>
+                              </div>
+                            </div>
+
+                            <div class="table-responsive" style="
+                                  height: 400px;
+                                  overflow-y: scroll;
+                                  margin-top: 10px;
+                                ">
+                              <table class="table" style="color: #333533">
+                                <thead>
+                                  <tr>
+                                    <th>Appointment ID</th>
+                                    <th>Customer Details</th>
+                                    <th>Appointment Date</th>
+                                    <th>Create Bill</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="ongoingAppointmentList"></tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="billingAppointments" role="tabpanel" aria-labelledby="billingAppointments">
+                    <div class="row">
+                      <div class="col-sm-12 grid-margin stretch-card">
+                        <div class="card">
+                          <div class="card-body">
+                            <div class="d-sm-flex justify-content-between align-items-start">
+                              <div>
+                                <h4 class="card-title" style="font-weight: 800; color: #ffd700">
+                                  Appointments
+                                </h4>
+                              </div>
+                            </div>
+
+                            <div class="table-responsive" style="
+                                  height: 400px;
+                                  overflow-y: scroll;
+                                  margin-top: 10px;
+                                ">
+                              <table class="table" style="color: #333533">
+                                <thead>
+                                  <tr>
+                                    <th>Appointment ID</th>
+                                    <th>Customer Details</th>
+                                    <th>Appointment Date</th>
+                                    <th>Bill Amount</th>
+                                    <th>Pay Bill</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="billingAppointmentList"></tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="billedAppointments" role="tabpanel"
+                    aria-labelledby="billedAppointments">
+                    <div class="row">
+                      <div class="col-sm-12 grid-margin stretch-card">
+                        <div class="card">
+                          <div class="card-body">
+                            <div class="d-sm-flex justify-content-between align-items-start">
+                              <div>
+                                <h4 class="card-title" style="font-weight: 800; color: #ffd700">
+                                  Billed
+                                </h4>
+                              </div>
+                            </div>
+
+                            <div class="table-responsive" style="
+                                  height: 400px;
+                                  overflow-y: scroll;
+                                  margin-top: 10px;
+                                ">
+                              <table class="table" style="color: #333533">
+                                <thead>
+                                  <tr>
+                                    <th>Appointment ID</th>
+                                    <th>Customer Details</th>
+                                    <th>Appointment Date</th>
+                                    <th>Services Provided:</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="billedAppointmentList"></tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- content-wrapper ends -->
+        <!-- partial:partials/_footer.html -->
+        <footer class="footer">
+          <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Designed and Developed by
+              <a href="https://www.codexkraft.com/" target="_blank">
+                Codexkraft
+              </a>
+            </span>
+            <p>
+              Copyright &copy;
+              <script>
+                document.write(new Date().getFullYear());
+              </script>
+              Codexkraft All Rights Reserved
+            </p>
+          </div>
+        </footer>
+        <!-- partial -->
+      </div>
+      <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+
+  <!-- Custom js for this page-->
+
+  <!-- plugins:js -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <script src="vendors/js/vendor.bundle.base.js"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <script src="vendors/chart.js/Chart.min.js"></script>
+  <script src="vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+  <script src="vendors/progressbar.js/progressbar.min.js"></script>
+
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="js/off-canvas.js"></script>
+  <script src="js/hoverable-collapse.js"></script>
+  <script src="js/template.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/todolist.js"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page-->
+  <script src="js/jquery.cookie.js" type="text/javascript"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/Chart.roundedBarCharts.js"></script>
+  <!-- End custom js for this page-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+  <!-- <script src="externalJS/getAppointment.js" type="module"></script> -->
+  <!-- <script src="externalJS/setAppointment.js" type="module"></script> -->
+  <script src="externalJS/appointments.js" type="module"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.9.1/jquery.timepicker.min.js"></script>
+</body>
+
+</html>

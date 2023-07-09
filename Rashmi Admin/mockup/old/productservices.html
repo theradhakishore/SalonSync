@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rashmi Salon | Products & Services</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="dashboard.html">Home</a></li>
+            <li><a href="customers.html">Customers</a></li>
+            <li><a href="employees.html">Employees</a></li>
+            <li><a href="appointments.html">Appointments</a></li>
+            <li><a href="productservices.html">Offerings</a></li>
+            <li><a href="billing.html">Billing</a></li>
+            <li><a href="credit.html">Credits</a></li>
+            <li><a href="debit.html">Debits</a></li>
+        </ul>
+    </nav>
+    <main>
+        <h2>Add Product</h2>
+        <form name="addNewProductForm" action="productservices.html" method="post" onsubmit="return addNewProduct()">
+            <label for="productName">Product Name:</label><br>
+            <input type="text" name="productName" id="productName" required><br>
+            <label for="productPrice">Product Price:</label><br>
+            <input type="number" name="productPrice" id="productPrice" step="0.01" min="0" required><br>
+            <label for="productStock">Product Stock:</label><br>
+            <input type="number" name="productStock" id="productStock" min="0" required><br>
+            <label for="productTaxSlab">Product Tax Slab:</label><br>
+            <input type="number" name="productTaxSlab" id="productTaxSlab" min="0" required><br>
+            <label for="productDisplayStock">Product Display Stock:</label><br>
+            <input type="number" name="productDisplayStock" id="productDisplayStock" min="0" required><br>
+            <input type="submit" value="Add New Product"><br>
+            <div class="info"></div><br>
+        </form>
+
+        <h2>All Products:</h2>
+        <div id="productsList"></div>
+        
+        <h2>Add Service</h2>
+        <form name="addNewServiceForm" action="productservices.html" method="post" onsubmit="return addNewService()">
+            <label for="serviceName">Service Name:</label><br>
+            <input type="text" name="serviceName" id="serviceName" required><br>
+            <label for="servicePrice">Service Price:</label><br>
+            <input type="text" name="servicePrice" id="servicePrice" required><br>
+            <input type="submit" value="Add New Service"><br>
+            <div class="info"></div><br>
+        </form>
+
+        <h2>All Services:</h2>
+        <div id="servicesList"></div>
+    </main>
+    <script>
+        function addNewProduct() {
+            const existingProducts = getAllProducts()
+
+            const productID = existingProducts.length+1
+            const productName = document.getElementById('productName').value
+            const productPrice = document.getElementById('productPrice').value
+            const productStock = document.getElementById('productStock').value
+            const productTaxSlab = document.getElementById('productTaxSlab').value
+            const productDisplayStock = document.getElementById('productDisplayStock').value
+
+            const newProduct = { productID, productName, productPrice, productStock, productTaxSlab, productDisplayStock }
+            existingProducts.push(newProduct)
+
+            localStorage.setItem('products', JSON.stringify(existingProducts))
+            // evt.preventDefault()
+            console.log('added product')
+            return false
+        }
+
+        function getAllProducts() {
+            return JSON.parse(localStorage.getItem('products') || '[]')
+        }
+
+        const ROW_ELEMENT = document.createElement('tr')
+        const CELL_ELEMENT = document.createElement('td')
+        const INPUT_ELEMENT = document.createElement('input')
+        function listAllProducts(table) {
+            const productsList = getAllProducts()
+            for(product of productsList) {
+                const new_row = ROW_ELEMENT.cloneNode(true)
+                const id_field = CELL_ELEMENT.cloneNode(true)
+                const name_field = CELL_ELEMENT.cloneNode(true)
+                const price_field = CELL_ELEMENT.cloneNode(true)
+                const stock_field = CELL_ELEMENT.cloneNode(true)
+                const display_price_field = CELL_ELEMENT.cloneNode(true)
+                const display_stock_field = CELL_ELEMENT.cloneNode(true)
+
+                id_field.textContent = product.productID
+                name_field.textContent = product.productName
+                price_field.textContent = product.productPrice
+                stock_field.textContent = product.productStock
+                display_price_field.textContent = product.productPrice * (1 + product.productTaxSlab/100)
+                display_stock_field.textContent = product.productDisplayStock
+                
+                new_row.appendChild(id_field)
+                new_row.appendChild(name_field)
+                new_row.appendChild(price_field)
+                new_row.appendChild(stock_field)
+                new_row.appendChild(display_price_field)
+                new_row.appendChild(display_stock_field)
+                table.appendChild(new_row)
+            }
+        }
+        listAllProducts(document.getElementById('productsList'))
+
+        function addNewService() {
+            const existingServices = getAllServices()
+
+            const serviceID = existingServices.length+1
+            const serviceName = document.getElementById('serviceName').value
+            const servicePrice = document.getElementById('servicePrice').value
+
+            const newService = { serviceID, serviceName, servicePrice }
+            existingServices.push(newService)
+
+            localStorage.setItem('services', JSON.stringify(existingServices))
+            // evt.preventDefault()
+            console.log('added service')
+            return false
+        }
+
+        function getAllServices() {
+            return JSON.parse(localStorage.getItem('services') || '[]')
+        }
+
+        function listAllServices(table) {
+            const servicesList = getAllServices()
+            for(service of servicesList) {
+                const new_row = ROW_ELEMENT.cloneNode(true)
+                const id_field = CELL_ELEMENT.cloneNode(true)
+                const name_field = CELL_ELEMENT.cloneNode(true)
+                const price_field = CELL_ELEMENT.cloneNode(true)
+
+                id_field.textContent = service.serviceID
+                name_field.textContent = service.serviceName
+                price_field.textContent = service.servicePrice
+                
+                new_row.appendChild(id_field)
+                new_row.appendChild(name_field)
+                new_row.appendChild(price_field)
+                table.appendChild(new_row)
+            }
+        }
+        listAllServices(document.getElementById('servicesList'))
+    </script>
+</body>
+</html>
