@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "208005353852",
+    "project_id": "rashmi-salon",
+    "storage_bucket": "rashmi-salon.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:208005353852:android:77d2c04cb83349b52854f9",
+        "android_client_info": {
+          "package_name": "com.example.rashmi_employee_management"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "208005353852-4q0880r5umso2bkqun4i1835gc1vaan7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2Z_jHa7RKhRF5NEvVtcujMDnsHWgyuE8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "208005353852-4q0880r5umso2bkqun4i1835gc1vaan7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
